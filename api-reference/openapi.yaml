@@ -1,0 +1,189 @@
+openapi: '3.0.0'
+info:
+  version: 1.0.0
+  title: Testing
+  license:
+    name: MIT
+servers:
+  - url: https://api.testing.example.com/v1
+paths:
+  /models:
+    get:
+      summary: List models
+      description: Retrieves a paginated list of machine learning models available in ML Minasaat. Use the limit parameter to control page size.
+      operationId: listModels
+      parameters:
+        - name: limit
+          in: query
+          description: How many items to return at one time (max 100)
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        200:
+          description: An paged array of models
+          headers:
+            x-next:
+              description: A link to the next page of responses
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Models'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      summary: Create model
+      operationId: createModel
+      responses:
+        201:
+          description: Null response
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /models/{modelId}:
+    get:
+      summary: Get model info
+      description: Retrieves detailed information about a specific machine learning model by its unique identifier. Use this endpoint when you need model metadata or configuration details.
+      operationId: showModelById
+      parameters:
+        - name: modelId
+          in: path
+          required: true
+          description: The id of the model to retrieve
+          schema:
+            type: string
+      responses:
+        200:
+          description: Expected response to a valid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Models'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /datasets:
+    get:
+      summary: List datasets
+      description: Retrieves a paginated list of datasets used for ML Minasaat documentation and model workflows. Use the limit parameter to control page size.
+      operationId: listDatasets
+      parameters:
+        - name: limit
+          in: query
+          description: How many items to return at one time (max 100)
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        200:
+          description: An paged array of datasets
+          headers:
+            x-next:
+              description: A link to the next page of responses
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Datasets'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      summary: Create dataset
+      operationId: createDataset
+      responses:
+        201:
+          description: Null response
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /datasets/{datasetId}:
+    get:
+      summary: Get dataset info
+      description: Retrieves detailed information about a specific dataset by its unique identifier. Use this endpoint to inspect dataset purpose, source, and status.
+      operationId: showDatasetById
+      parameters:
+        - name: datasetId
+          in: path
+          required: true
+          description: The id of the dataset to retrieve
+          schema:
+            type: string
+      responses:
+        200:
+          description: Expected response to a valid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Datasets'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Model:
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        tag:
+          type: string
+    Models:
+      type: array
+      items:
+        $ref: '#/components/schemas/Model'
+    Error:
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    Dataset:
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        tag:
+          type: string
+    Datasets:
+      type: array
+      items:
+        $ref: '#/components/schemas/Dataset'
